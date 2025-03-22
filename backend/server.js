@@ -1,9 +1,12 @@
+require('dotenv').config({ path: '../.env' })
 const express = require('express');
 const app = express();
+const port = process.env.SERVER_PORT || 3000;
+const userRoutes = require('./routes/userRoutes');
 
+app.use('/api', userRoutes);
 app.get('/', (req, res) => res.send('Hello, world!'));
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`My first Express app - listening on port ${PORT}!`);
+app.listen(port, () => {
+  console.log(`Backend listening on port ${port}`);
 });
