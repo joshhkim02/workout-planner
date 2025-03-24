@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const port = process.env.SERVER_PORT || 3000;
 const userRoutes = require('./routes/userRoutes');
+app.use(express.json());
 
 app.use('/api', userRoutes);
 app.get('/', (req, res) => res.send('Hello, world!'));
