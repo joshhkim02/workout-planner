@@ -15,7 +15,11 @@ async function createUser(name, email, password_hash) {
     );
     return result.rows[0];
 }
-// TODO: Make it so it returns a specific user
+async function getUser(user_email) {
+    const { rows } = await pool.query("SELECT * FROM users WHERE email = ($1)", [user_email]);
+    return rows[0];
+}
+
 async function getAllUsers() {
     const { rows } = await pool.query("SELECT * FROM users");
     return rows;
@@ -24,4 +28,5 @@ async function getAllUsers() {
 module.exports = {
     getAllUsers,
     createUser,
+    getUser,
 }
