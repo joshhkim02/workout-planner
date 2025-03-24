@@ -1,11 +1,11 @@
-const pool = require("./database");
+const pool = require("../database/database");
 
 /*
-    This file contains all the queries that will be used in controllers
-    Used in:
-        - userController
-        - workoutController
-        - exerciseController
+    This file contains all the queries that will be used in userController
+        - createUser(name, email, password_hash)
+        - getUser(user_email)
+        - deleteUser(user_email)
+        - getAllUsers()
 */
 
 async function createUser(name, email, password_hash) {
