@@ -20,6 +20,28 @@ const registerController = async (req, res) => {
         res.status(500).send("Error creating user: " + err.message);
     }
 };
+
+const deleteUserController = async (req, res) => {
+    try {
+        console.log("req.body: ", req.body);
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).send("Missing required field: email");
+        }
+
+        const user = await db.deleteUser(email);
+        console.log("User deleted: ", user);
+        res.status(201).json({
+            message: "User deleted successfully",
+            user: user
+        });
+    } catch (err) {
+        console.log("Error deleting user: ", err);
+        res.status(500).send("Error deleting user: " + err.message);
+    }
+}
+
 // const loginController = async (req, res) => {};
 // const logoutController = async (req, res) => {};
 const getAllUsersController = async (req, res) => {
@@ -60,4 +82,5 @@ module.exports = {
     getAllUsersController,
     registerController,
     getUserController,
+    deleteUserController,
 }

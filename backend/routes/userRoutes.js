@@ -6,12 +6,15 @@ const {
   // logoutController,
   getAllUsersController,
   getUserController,
+  deleteUserController,
 } = require('../controllers/userController');
 
-router.post('/register', registerController);
-// router.post('/login', loginController);
-// router.post('/logout', logoutController);
+router.post('/user', registerController);
+router.delete('/user', deleteUserController);
 router.get('/user', getAllUsersController);
 router.get('/getuser', getUserController);
+
+// router.post('/login', loginController);
+// router.post('/logout', logoutController);
 
 module.exports = router;
