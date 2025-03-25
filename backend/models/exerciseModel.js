@@ -25,8 +25,18 @@ async function getExercise(workout_id, exercise_id) {
     return rows[0];
 }
 
+// exercise_id, name, description, sets, reps, weight
+async function getAllExercises(workout_id) {
+    const { rows } = await pool.query(
+        "SELECT * FROM exercises WHERE workout_id = ($1)",
+        [workout_id]
+    );
+    return rows;
+}
+
 module.exports = {
     createExercise,
     getExercise,
+    getAllExercises,
 }
 
