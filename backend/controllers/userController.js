@@ -1,4 +1,4 @@
-const db = require("../models/userQueries");
+const db = require("../models/userModel");
 
 const registerController = async (req, res) => {
     try {

@@ -17,6 +17,15 @@ async function createWorkout(user_id, name, description, duration) {
     return rows[0];
 }
 
+async function getWorkout(user_id, workout_id) {
+    const { rows } = await pool.query(
+        "SELECT name, description, duration FROM workouts WHERE user_id = ($1) AND workout_id = ($2)",
+        [user_id, workout_id]
+    );
+    return rows[0];
+}
+
 module.exports = {
     createWorkout,
+    getWorkout,
 }

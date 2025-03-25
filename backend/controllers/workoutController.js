@@ -1,4 +1,4 @@
-const db = require("../models/workoutQueries");
+const db = require("../models/workoutModel");
 
 const createWorkoutController = async (req, res) => {
     try {
@@ -21,6 +21,28 @@ const createWorkoutController = async (req, res) => {
     }
 };
 
+const getWorkoutController = async (req, res) => {
+    try {
+        console.log("req.body: ", req.body);
+        const { user_id, workout_id } = req.body;
+
+        if (!user_id || !workout_id) {
+            return res.status(400).send("Missing required fields: user_id, workout_id");
+        }
+
+        const result = await db.getWorkout(user_id, workout_id);
+        console.log("Specified workout retrieved: ", result);
+        res.status(201).json({
+            message: "Specified workout returned successfully",
+            result: result
+        });
+    } catch (err) {
+        console.log("Error returning workout: ", err);
+        res.status(500).send("Error returning workout: " + err.message);
+    }
+};
+
 module.exports = {
     createWorkoutController,
+    getWorkoutController,
 }
