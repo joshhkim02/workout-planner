@@ -63,8 +63,39 @@ const getAllExercisesController = async (req, res) => {
     }
 };
 
+const updateExerciseController = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description, sets, reps, weight } = req.body;
+
+        if (!id) {
+            return res.status(400).json({
+                error: "Exercise ID is required"
+            });
+        }
+
+        const result = await db.updateExercise(id, name || null, description || null, sets || null, reps || null, weight || null);
+
+        if (!result) {
+            return res.status(404).json({
+                error: "Exercise not found"
+            });
+        }
+
+        res.status(201).json({
+            message: "Exercise updated successfully",
+            result: result
+        });
+    } catch (err) {
+        console.log("Error updating exercise: ", err);
+        res.status(500).send("Error updating exercise: " + err.message);
+    }
+};
+
 module.exports = {
     createExerciseController,
     getExerciseController,
     getAllExercisesController,
+    updateExerciseController,
+
 }

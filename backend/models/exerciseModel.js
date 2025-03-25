@@ -34,9 +34,18 @@ async function getAllExercises(workout_id) {
     return rows;
 }
 
+async function updateExercise(exercise_id, name, description, sets, reps, weight) {
+    const { rows } = await pool.query(
+        "UPDATE exercises SET name = COALESCE($1, name), description = COALESCE($2, description), sets = COALESCE($3, sets), reps = COALESCE($4, reps), weight = COALESCE($5, weight) WHERE exercise_id = ($6) RETURNING *",
+        [name, description, sets, reps, weight, exercise_id]
+    );
+    return rows[0]
+}
+
 module.exports = {
     createExercise,
     getExercise,
     getAllExercises,
+    updateExercise,
 }
 
