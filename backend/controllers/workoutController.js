@@ -42,7 +42,29 @@ const getWorkoutController = async (req, res) => {
     }
 };
 
+const getAllWorkoutsController = async (req, res) => {
+    try {
+        console.log("req.body: ", req.body);
+        const { user_id } = req.body;
+
+        if (!user_id) {
+            return res.status(400).send("Missing required fields: user_id");
+        }
+
+        const result = await db.getAllWorkouts(user_id);
+        console.log("All workouts from specified user retrieved ", result);
+        res.status(201).json({
+            message: "All workouts from specified user returned successfully",
+            result: result
+        });
+    } catch (err) {
+        console.log("Error retrieving all workouts: ", err);
+        res.status(500).send("Error returning workouts: " + err.message);
+    }
+}
+
 module.exports = {
     createWorkoutController,
     getWorkoutController,
+    getAllWorkoutsController,
 }

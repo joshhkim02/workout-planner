@@ -25,7 +25,15 @@ async function getWorkout(user_id, workout_id) {
     return rows[0];
 }
 
+async function getAllWorkouts(user_id) {
+    const { rows } = await pool.query("SELECT * FROM workouts WHERE user_id = ($1)",
+        [user_id]
+    );
+    return rows;
+}
+
 module.exports = {
     createWorkout,
     getWorkout,
+    getAllWorkouts,
 }
