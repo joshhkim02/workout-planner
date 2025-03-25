@@ -40,7 +40,7 @@ const deleteUserController = async (req, res) => {
         console.log("Error deleting user: ", err);
         res.status(500).send("Error deleting user: " + err.message);
     }
-}
+};
 
 // const loginController = async (req, res) => {};
 // const logoutController = async (req, res) => {};

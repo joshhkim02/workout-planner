@@ -39,9 +39,16 @@ async function updateWorkout(workout_id, name, description, duration) {
     return rows[0];
 }
 
+async function deleteWorkout(workout_id) {
+    const { rows } = await pool.query("DELETE FROM workouts WHERE workout_id = ($1) RETURNING *",
+        [workout_id]);
+    return rows[0];
+}
+
 module.exports = {
     createWorkout,
     getWorkout,
     getAllWorkouts,
     updateWorkout,
+    deleteWorkout,
 }

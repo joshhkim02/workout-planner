@@ -92,9 +92,31 @@ const updateWorkoutController = async (req, res) => {
     }
 };
 
+const deleteWorkoutController = async (req, res) => {
+    try {
+        console.log("req.body: ", req.body);
+        const { workout_id } = req.body;
+
+        if (!workout_id) {
+            return res.status(400).send("Missing required field: workout_id");
+        }
+
+        const result = await db.deleteWorkout(workout_id);
+        console.log("Workout deleted: ", result);
+        res.status(201).json({
+            message: "Workout deleted successfully",
+            result: result
+        });
+    } catch (err) {
+        console.log("Error deleting workout: ", err);
+        res.status(500).send("Error deleting workout: " + err.message);
+    }
+};
+
 module.exports = {
     createWorkoutController,
     getWorkoutController,
     getAllWorkoutsController,
     updateWorkoutController,
+    deleteWorkoutController,
 }
