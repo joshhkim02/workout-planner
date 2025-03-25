@@ -61,10 +61,40 @@ const getAllWorkoutsController = async (req, res) => {
         console.log("Error retrieving all workouts: ", err);
         res.status(500).send("Error returning workouts: " + err.message);
     }
-}
+};
+
+const updateWorkoutController = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description, duration } = req.body;
+
+        if (!id) {
+            return res.status(400).json({
+                error: "Workout ID is required"
+            });
+        }
+
+        const result = await db.updateWorkout(id, name || null, description || null, duration || null);
+
+        if (!result) {
+            return res.status(404).json({
+                error: "Workout not found"
+            });
+        }
+
+        res.status(201).json({
+            message: "Workout updated successfully",
+            result: result
+        });
+    } catch (err) {
+        console.log("Error updating workout: ", err);
+        res.status(500).send("Error updating workout: " + err.message);
+    }
+};
 
 module.exports = {
     createWorkoutController,
     getWorkoutController,
     getAllWorkoutsController,
+    updateWorkoutController,
 }

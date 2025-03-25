@@ -56,6 +56,7 @@ const getAllUsersController = async (req, res) => {
 
 };
 
+// TODO: IMPLEMENT REQ.PARAMS
 const getUserController = async (req, res) => {
     try {
         console.log("req.body: ", req.body);
