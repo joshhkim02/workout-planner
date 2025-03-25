@@ -4,11 +4,13 @@ const app = express();
 const port = process.env.SERVER_PORT || 3000;
 const userRoutes = require('./routes/userRoutes');
 const workoutRoutes = require('./routes/workoutRoutes');
+const exerciseRoutes = require('./routes/exerciseRoutes');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', userRoutes);
 app.use('/api', workoutRoutes);
+app.use('/api', exerciseRoutes);
 app.get('/', (req, res) => res.send('Hello, world!'));
 
 app.listen(port, () => {
