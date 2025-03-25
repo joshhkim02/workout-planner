@@ -92,10 +92,31 @@ const updateExerciseController = async (req, res) => {
     }
 };
 
+const deleteExerciseController = async (req, res) => {
+    try {
+        console.log("req.body: ", req.body);
+        const { exercise_id } = req.body;
+
+        if (!exercise_id) {
+            return res.status(400).send("Missing required field: exercise_id");
+        }
+
+        const result = await db.deleteExercise(exercise_id);
+        console.log("Exercise deleted: ", result);
+        res.status(201).json({
+            message: "Exercise deleted successfully",
+            result: result
+        });
+    } catch (err) {
+        console.log("Error deleting exercise: ", err);
+        res.status(500).send("Error deleting exercise: " + err.message);
+    }
+};
+
 module.exports = {
     createExerciseController,
     getExerciseController,
     getAllExercisesController,
     updateExerciseController,
-
+    deleteExerciseController,
 }

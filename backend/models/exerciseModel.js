@@ -42,10 +42,16 @@ async function updateExercise(exercise_id, name, description, sets, reps, weight
     return rows[0]
 }
 
+async function deleteExercise(exercise_id) {
+    const { rows } = await pool.query("DELETE FROM exercises WHERE exercise_id = ($1) RETURNING *", [exercise_id]);
+    return rows[0];
+}
+
 module.exports = {
     createExercise,
     getExercise,
     getAllExercises,
     updateExercise,
+    deleteExercise,
 }
 
