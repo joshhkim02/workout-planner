@@ -2,19 +2,18 @@ const express = require('express');
 const router = express.Router();
 const {
   registerController,
-  // loginController,
-  // logoutController,
+  loginController,
   getAllUsersController,
   getUserController,
   deleteUserController,
+  authenticateToken,
 } = require('../controllers/userController');
 
 router.post('/user', registerController);
-router.delete('/user', deleteUserController);
-router.get('/user', getAllUsersController);
-router.get('/getuser', getUserController);
+router.post('/login', loginController);
+router.delete('/user', authenticateToken, deleteUserController);
+router.get('/user', authenticateToken, getAllUsersController);
+router.get('/user/:id', authenticateToken, getUserController);
 
-// router.post('/login', loginController);
-// router.post('/logout', logoutController);
 
 module.exports = router;

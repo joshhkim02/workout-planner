@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateToken } = require('../controllers/userController');
 
 const {
     createWorkoutController,
@@ -9,10 +10,10 @@ const {
     deleteWorkoutController,
 } = require('../controllers/workoutController');
 
-router.post('/workout', createWorkoutController);
-router.get('/getworkout', getWorkoutController);
-router.get('/workout', getAllWorkoutsController);
-router.patch('/workout/:id', updateWorkoutController);
-router.delete('/workout/:id', deleteWorkoutController);
+router.post('/workout', authenticateToken, createWorkoutController);
+router.get('/workout/:id', authenticateToken, getWorkoutController);
+router.get('/workout', authenticateToken, getAllWorkoutsController);
+router.patch('/workout/:id', authenticateToken, updateWorkoutController);
+router.delete('/workout/:id', authenticateToken, deleteWorkoutController);
 
 module.exports = router;    

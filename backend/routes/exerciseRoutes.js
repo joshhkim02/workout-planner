@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const { authenticateToken } = require('../controllers/userController');
+
 const {
     createExerciseController,
     getExerciseController,
@@ -8,10 +10,10 @@ const {
     deleteExerciseController,
 } = require('../controllers/exerciseController');
 
-router.post('/exercise', createExerciseController);
-router.get('/exercise/:id', getExerciseController);
-router.get('/exercise', getAllExercisesController);
-router.patch('/exercise/:id', updateExerciseController);
-router.delete('/exercise/:id', deleteExerciseController);
+router.post('/exercise', authenticateToken, createExerciseController);
+router.get('/exercise/:id', authenticateToken, getExerciseController);
+router.get('/exercise', authenticateToken, getAllExercisesController);
+router.patch('/exercise/:id', authenticateToken, updateExerciseController);
+router.delete('/exercise/:id', authenticateToken, deleteExerciseController);
 
 module.exports = router;
