@@ -7,12 +7,12 @@ import {
     Typography,
     Paper,
     Avatar,
-    Grid,
-    Link
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -24,9 +24,11 @@ export default function Login() {
     });
 
     const handleChange = (e) => {
-        const { name } = e.target;
+        // Allow user to type in textfields
+        const { name, value } = e.target;
         setFormData({
             ...formData,
+            [name]: value
         });
 
         // Clear error when user types
@@ -64,13 +66,35 @@ export default function Login() {
         return isValid;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (validateForm()) {
-            // Here you would typically make an API call to authenticate
-            console.log('Form submitted:', formData);
-            alert('Login successful - Form data logged to console');
+            try {
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        password: formData.password
+                    })
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Login failed');
+                }
+
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                navigate('/home');
+            } catch (error) {
+                console.log('Login error:', error);
+                alert(`Login failed: ${error.message}`);
+            }
         }
     };
 
@@ -130,6 +154,19 @@ export default function Login() {
                     >
                         Sign In
                     </Button>
+
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Typography variant="body2">
+                            Don't have an account?{' '}
+                            <Button
+                                variant="text"
+                                onClick={() => navigate('/signup')}
+                                sx={{ p: 0, minWidth: 'auto', verticalAlign: 'baseline' }}
+                            >
+                                Register
+                            </Button>
+                        </Typography>
+                    </Box>
                 </Box>
             </Paper>
         </Container>

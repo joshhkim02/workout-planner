@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../env' })
+require('dotenv').config({ path: '../.env' })
 const db = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -38,7 +38,7 @@ const registerController = async (req, res) => {
 
         const token = jwt.sign(
             {
-                id: result.user_id,
+                id: result.id,
                 email: result.email
             },
             process.env.JWT_SECRET,
@@ -48,7 +48,7 @@ const registerController = async (req, res) => {
         res.status(201).json({
             token,
             user: {
-                id: result.user_id,
+                id: result.id,
                 name: result.name,
                 email: result.email
             }
@@ -61,20 +61,34 @@ const registerController = async (req, res) => {
 
 const loginController = async (req, res) => {
     try {
+        console.log("Login attempt for:", req.body);
         const { email, password } = req.body;
+
         const user = await db.getUser(email);
+        console.log("Full user object:", user);
+        console.log("User found:", user ? "Yes" : "No");
+
         if (!user) {
             return res.status(400).json({ message: 'User not found' });
         }
 
+        console.log("Stored hash:", user.password_hash);
+        console.log("Password type:", typeof password);
+        console.log("Hash type:", typeof user.password_hash);
+
         const isMatch = await bcrypt.compare(password, user.password_hash);
+        console.log("Password match result:", isMatch);
+
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
+        // console.log("DEBUG MODE: Bypassing password check");
+        // const isMatch = True;
+
         const token = jwt.sign(
             {
-                id: user.user_id,
+                id: user.id,
                 email: user.email
             },
             process.env.JWT_SECRET,
@@ -84,12 +98,13 @@ const loginController = async (req, res) => {
         res.json({
             token,
             user: {
-                id: user.user_id,
+                id: user.id,
                 name: user.name,
                 email: user.email
             }
         });
     } catch (error) {
+        console.error("Login error:", error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 }
@@ -127,7 +142,6 @@ const getAllUsersController = async (req, res) => {
 
 };
 
-// TODO: IMPLEMENT REQ.PARAMS
 const getUserController = async (req, res) => {
     try {
         console.log("req.body: ", req.body);

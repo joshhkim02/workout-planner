@@ -13,15 +13,13 @@ import {
     Tab,
     Divider,
     IconButton,
-    TextField,
-    InputAdornment
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import { fetchWithAuth } from '../services/authUtils';
 
 
 export default function WorkoutDashboard() {
@@ -118,6 +116,19 @@ export default function WorkoutDashboard() {
 
     const handleDeleteExercise = (id) => {
         setExercises(exercises.filter(exercise => exercise.id !== id));
+    };
+
+    const fetchWorkouts = async () => {
+        try {
+            const response = await fetchWithAuth('http://localhost:3000/api/workouts');
+            if (!response.ok) {
+                throw new Error('Failed to fetch workouts');
+            }
+            const data = await response.json();
+            setWorkouts(data);
+        } catch (error) {
+            console.error('Error fetching workouts:', error);
+        }
     };
 
     return (

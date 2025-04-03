@@ -9,8 +9,10 @@ import {
     Avatar,
 } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -25,10 +27,12 @@ export default function SignUp() {
         confirmPassword: '',
     });
 
+    // Allow user to type in textfields
     const handleChange = (e) => {
-        const { name } = e.target;
+        const { name, value } = e.target;
         setFormData({
             ...formData,
+            [name]: value
         });
 
         // Clear error when user types
@@ -47,7 +51,6 @@ export default function SignUp() {
             email: '',
             password: '',
             confirmPassword: '',
-            agreeToTerms: ''
         };
 
         // Full name validation
@@ -83,17 +86,41 @@ export default function SignUp() {
             isValid = false;
         }
 
-
         setErrors(newErrors);
         return isValid;
     };
-    const handleSubmit = (e) => {
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (validateForm()) {
-            // Here you would typically make an API call to authenticate
-            console.log('Form submitted:', formData);
-            alert('Registration successful - Form data logged to console');
+            try {
+                const response = await fetch('http://localhost:3000/api/user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: formData.fullName,
+                        email: formData.email,
+                        password: formData.password,
+                    })
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Registration failed');
+                }
+
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                navigate('/home');
+            } catch (error) {
+                console.log('Registration error:', error);
+                alert(`Login failed: ${error.message}`);
+            }
         }
     };
 
@@ -164,7 +191,7 @@ export default function SignUp() {
                         fullWidth
                         name="confirmPassword"
                         label="Confirm Password"
-                        type="confirmPassword"
+                        type="password"
                         id="confirmPassword"
                         autoComplete="confirmPassword"
                         value={formData.confirmPassword}
@@ -178,8 +205,21 @@ export default function SignUp() {
                         variant="contained"
                         sx={{ mt: 3, mb: 2 }}
                     >
-                        Sign In
+                        Sign Up
                     </Button>
+
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Typography variant="body2">
+                            Already have an account?{' '}
+                            <Button
+                                variant="text"
+                                onClick={() => navigate('/')}
+                                sx={{ p: 0, minWidth: 'auto', verticalAlign: 'baseline' }}
+                            >
+                                Sign in
+                            </Button>
+                        </Typography>
+                    </Box>
                 </Box>
             </Paper>
         </Container>
