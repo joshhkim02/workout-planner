@@ -22,7 +22,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LogoutIcon from '@mui/icons-material/Logout';
 import AddIcon from '@mui/icons-material/Add';
 
 export default function Navbar() {
@@ -48,20 +47,17 @@ export default function Navbar() {
     };
 
     // Navigation items
-    const navItems = [
-        { text: 'Home', icon: <HomeIcon />, path: '/home' },
-        { text: 'Add Workout', icon: <DirectionsRunIcon />, path: '/workout' },
-        { text: 'Add Exercise', icon: <FitnessCenterIcon />, path: '/exercise' },
-    ];
+    const navItems = isLoggedIn
+        ? [
+            { text: 'Home', icon: <HomeIcon />, path: '/home' },
+            { text: 'Add Workout', icon: <DirectionsRunIcon />, path: '/workout' },
+            { text: 'Add Exercise', icon: <FitnessCenterIcon />, path: '/exercise' },
+        ]
+        : [];
 
     // Action items
     const actionItems = isLoggedIn
-        ? [
-            { text: 'Add Workout', icon: <AddIcon />, path: '/workout' },
-            { text: 'Add Exercise', icon: <AddIcon />, path: '/exercise' },
-            { text: 'Profile', icon: <AccountCircleIcon />, path: '/profile' },
-            { text: 'Logout', icon: <LogoutIcon />, path: '/logout' },
-        ]
+        ? []
         : [
             { text: 'Login', icon: <AccountCircleIcon />, path: '/' },
             { text: 'Sign Up', icon: <AddIcon />, path: '/signup' },
@@ -99,7 +95,6 @@ export default function Navbar() {
                     </ListItem>
                 ))}
             </List>
-            <Divider />
             <List>
                 {actionItems.map((item) => (
                     <ListItem button key={item.text} component="a" href={item.path}>

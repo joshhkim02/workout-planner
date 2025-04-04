@@ -83,9 +83,6 @@ const loginController = async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // console.log("DEBUG MODE: Bypassing password check");
-        // const isMatch = True;
-
         const token = jwt.sign(
             {
                 id: user.id,

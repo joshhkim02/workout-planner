@@ -116,7 +116,7 @@ export default function SignUp() {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
-                navigate('/home');
+                navigate('/');
             } catch (error) {
                 console.log('Registration error:', error);
                 alert(`Login failed: ${error.message}`);
