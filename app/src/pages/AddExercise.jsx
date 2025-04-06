@@ -9,10 +9,12 @@ import {
     Snackbar,
     Alert
 } from '@mui/material';
+import { fetchWithAuth } from '../services/authUtils';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function AddExercise() {
-    // Form state
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         exerciseName: '',
         exerciseDescription: '',
@@ -20,14 +22,10 @@ export default function AddExercise() {
         reps: '',
         weight: '',
     });
-
-    // Error state
     const [errors, setErrors] = useState({});
-
-    // Submission state
+    const [apiError, setApiError] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    // Handle text input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -49,7 +47,7 @@ export default function AddExercise() {
         const newErrors = {};
 
         if (!formData.exerciseName.trim()) {
-            newErrors.exerciseName = 'First name is required';
+            newErrors.exerciseName = 'Exercise name is required';
         }
 
         if (!formData.exerciseDescription.trim()) {
@@ -73,21 +71,55 @@ export default function AddExercise() {
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setApiError('');
 
         if (validateForm()) {
-            console.log('Form submitted:', formData);
-            setIsSubmitted(true);
+            try {
+                const userData = JSON.parse(localStorage.getItem('user'));
 
-            // Reset form after successful submission (optional)
-            // setFormData({
-            //   exerciseName: '',
-            //   exerciseDescription: '',
-            //   sets: '',
-            //   reps: '',
-            //   weight: '',
-            // });
+                if (!userData || !userData.id) {
+                    console.log("User not authenticated. Please log in again.");
+                    return;
+                }
+
+                const exerciseData = {
+                    user_id: userData.id,
+                    name: formData.exerciseName,
+                    description: formData.exerciseDescription,
+                    sets: formData.sets,
+                    reps: formData.reps,
+                    weight: formData.weight
+                };
+
+                const response = await fetchWithAuth('http://localhost:3000/api/exercise', {
+                    method: 'POST',
+                    body: JSON.stringify(exerciseData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log("Exercise created successfully:", data);
+                    setIsSubmitted(true);
+
+                    setFormData({
+                        exerciseName: '',
+                        exerciseDescription: '',
+                        sets: '',
+                        reps: '',
+                        weight: '',
+                    });
+                    navigate('/home');
+                } else {
+                    console.log("Error creating exercise: ", data);
+                    setApiError(data.message || `Failed to create exercise (${response.status}). Please try again.`);
+                }
+            } catch (error) {
+                console.log("Error submitting form: ", error);
+                setApiError(error.message || 'An error occurred. Please try again.');
+            }
         }
     };
 
@@ -96,11 +128,15 @@ export default function AddExercise() {
         setIsSubmitted(false);
     };
 
+    const handleCloseErrorSnackbar = () => {
+        setApiError('');
+    };
+
     return (
         <Container maxWidth="sm">
             <Paper elevation={3} sx={{ p: 4, mt: 4, mb: 4 }}>
                 <Typography variant="h4" component="h1" align="center" gutterBottom>
-                    Exercise Information
+                    Add New Exercise
                 </Typography>
 
                 <Box component="form" onSubmit={handleSubmit} noValidate>
@@ -194,6 +230,18 @@ export default function AddExercise() {
             >
                 <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
                     Form submitted successfully!
+                </Alert>
+            </Snackbar>
+
+            {/* Error message */}
+            <Snackbar
+                open={!!apiError}
+                autoHideDuration={6000}
+                onClose={handleCloseErrorSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseErrorSnackbar} severity="error" sx={{ width: '100%' }}>
+                    {apiError}
                 </Alert>
             </Snackbar>
         </Container>
