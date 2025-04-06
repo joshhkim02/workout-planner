@@ -9,27 +9,26 @@ const pool = require("../database/database");
         - deleteExercise
 */
 
-async function createExercise(workout_id, name, description, sets, reps, weight) {
+async function createExercise(user_id, name, description, sets, reps, weight) {
     const { rows } = await pool.query(
-        "INSERT INTO exercises (workout_id, name, description, sets, reps, weight) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-        [workout_id, name, description, sets, reps, weight]
+        "INSERT INTO exercises (user_id, name, description, sets, reps, weight) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+        [user_id, name, description, sets, reps, weight]
     );
     return rows[0];
 }
 
-async function getExercise(workout_id, exercise_id) {
+async function getExercise(user_id, exercise_id) {
     const { rows } = await pool.query(
-        "SELECT name, description, sets, reps, weight FROM exercises WHERE workout_id = ($1) AND exercise_id = ($2)",
-        [workout_id, exercise_id]
+        "SELECT name, description, sets, reps, weight FROM exercises WHERE user_id = ($1) AND exercise_id = ($2)",
+        [user_id, exercise_id]
     );
     return rows[0];
 }
 
-// exercise_id, name, description, sets, reps, weight
-async function getAllExercises(workout_id) {
+async function getAllExercises(user_id) {
     const { rows } = await pool.query(
-        "SELECT * FROM exercises WHERE workout_id = ($1)",
-        [workout_id]
+        "SELECT * FROM exercises WHERE user_id = ($1)",
+        [user_id]
     );
     return rows;
 }

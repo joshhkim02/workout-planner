@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     AppBar,
     Toolbar,
@@ -23,18 +23,39 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddIcon from '@mui/icons-material/Add';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
+    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [drawerOpen, setDrawerOpen] = useState(false);
 
-    // Mock user state - in a real app would come from auth context
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
-    const user = {
-        name: 'John Doe',
-        avatar: null // Would be an image URL in a real app
-    };
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState({
+        name: '',
+        email: '',
+        id: null
+    });
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userData = localStorage.getItem('user');
+
+        if (token && userData) {
+            setIsLoggedIn(true);
+            try {
+                const parsedUser = JSON.parse(userData);
+                setUser({
+                    name: parsedUser.name || 'User',
+                    email: parsedUser.email || '',
+                    id: parsedUser.id || null
+                });
+            } catch (error) {
+                console.log("Error parsing user data:", error);
+            }
+        }
+    }, []);
 
     const toggleDrawer = (open) => (event) => {
         if (
@@ -51,13 +72,13 @@ export default function Navbar() {
         ? [
             { text: 'Home', icon: <HomeIcon />, path: '/home' },
             { text: 'Add Workout', icon: <DirectionsRunIcon />, path: '/workout' },
-            { text: 'Add Exercise', icon: <FitnessCenterIcon />, path: '/exercise' },
-        ]
+            { text: 'Add Exercise', icon: <FitnessCenterIcon />, path: '/exercise' },]
         : [];
 
     // Action items
     const actionItems = isLoggedIn
-        ? []
+        ? [
+        ]
         : [
             { text: 'Login', icon: <AccountCircleIcon />, path: '/' },
             { text: 'Sign Up', icon: <AddIcon />, path: '/signup' },

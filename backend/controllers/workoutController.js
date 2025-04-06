@@ -23,16 +23,16 @@ const createWorkoutController = async (req, res) => {
 
 const getWorkoutController = async (req, res) => {
     try {
-        console.log("req.body: ", req.body);
-        const { user_id, workout_id } = req.body;
+        const { id } = req.params;
+        const { user_id, workout_id } = req.user.id;
 
-        if (!user_id || !workout_id) {
+        if (!user_id || !id) {
             return res.status(400).send("Missing required fields: user_id, workout_id");
         }
 
-        const result = await db.getWorkout(user_id, workout_id);
+        const result = await db.getWorkout(user_id, id);
         console.log("Specified workout retrieved: ", result);
-        res.status(201).json({
+        res.status(200).json({
             message: "Specified workout returned successfully",
             result: result
         });
@@ -45,7 +45,7 @@ const getWorkoutController = async (req, res) => {
 const getAllWorkoutsController = async (req, res) => {
     try {
         console.log("req.body: ", req.body);
-        const { user_id } = req.body;
+        const user_id = req.user.id;
 
         if (!user_id) {
             return res.status(400).send("Missing required fields: user_id");
@@ -53,7 +53,7 @@ const getAllWorkoutsController = async (req, res) => {
 
         const result = await db.getAllWorkouts(user_id);
         console.log("All workouts from specified user retrieved ", result);
-        res.status(201).json({
+        res.status(200).json({
             message: "All workouts from specified user returned successfully",
             result: result
         });

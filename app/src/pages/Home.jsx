@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Container,
     Typography,
@@ -22,91 +22,83 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import { fetchWithAuth } from '../services/authUtils';
 
 
-export default function WorkoutDashboard() {
+export default function Home() {
     // Tab state
     const [tabValue, setTabValue] = useState(0);
+    const [workouts, setWorkouts] = useState([]);
+    const [exercises, setExercises] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [error, setError] = useState(null);
 
-    // Mock data - in a real app this would come from your backend
-    const [workouts, setWorkouts] = useState([
-        {
-            id: 1,
-            workoutName: 'Upper Body Strength',
-            workoutDescription: 'Focus on chest, shoulders, and triceps',
-            duration: '45 minutes',
-        },
-        {
-            id: 2,
-            workoutName: 'Lower Body Power',
-            workoutDescription: 'Squats, lunges, and deadlifts for strength',
-            duration: '50 minutes',
-        },
-        {
-            id: 3,
-            workoutName: 'Full Body HIIT',
-            workoutDescription: 'High intensity interval training to burn calories',
-            duration: '30 minutes',
+    useEffect(() => {
+        if (tabValue === 0) {
+            fetchWorkouts();
+        } else if (tabValue === 1) {
+            fetchExercises();
         }
-    ]);
+    }, [tabValue]);
 
-    const [exercises, setExercises] = useState([
-        {
-            id: 1,
-            exerciseName: 'Bench Press',
-            exerciseDescription: 'Lie on bench and press barbell upward',
-            sets: '3',
-            reps: '8-10',
-            weight: '135',
-        },
-        {
-            id: 2,
-            exerciseName: 'Squat',
-            exerciseDescription: 'Lower body with barbell on shoulders',
-            sets: '4',
-            reps: '6-8',
-            weight: '185',
-        },
-        {
-            id: 3,
-            exerciseName: 'Deadlift',
-            exerciseDescription: 'Lift barbell from floor to hip level',
-            sets: '3',
-            reps: '5',
-            weight: '225',
-        },
-        {
-            id: 4,
-            exerciseName: 'Pull-ups',
-            exerciseDescription: 'Pull body up on bar until chin clears',
-            sets: '3',
-            reps: '8-10',
-            weight: 'Body weight',
+    const fetchWorkouts = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetchWithAuth('http://localhost:3000/api/workout');
+            if (!response.ok) {
+                throw new Error('Failed to fetch workouts');
+            }
+            const data = await response.json();
+            const formattedWorkouts = data.result.map(workout => ({
+                id: workout.workout_id,
+                name: workout.name,
+                description: workout.description,
+                duration: workout.duration
+            }));
+            setWorkouts(formattedWorkouts);
+        } catch (error) {
+            console.log('Error fetching workouts:', error);
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
         }
-    ]);
+    };
 
-    // Handle tab change
+    const fetchExercises = async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetchWithAuth('http://localhost:3000/api/exercise');
+            if (!response.ok) {
+                throw new Error('Failed to fetch exercises');
+            }
+            const data = await response.json();
+            const formattedExercises = data.result.map(exercise => ({
+                id: exercise.exercise_id,
+                name: exercise.name,
+                description: exercise.description,
+                sets: exercise.sets,
+                reps: exercise.reps,
+                weight: exercise.weight,
+            }));
+            setExercises(formattedExercises);
+        } catch (error) {
+            console.log('Error fetching exercises:', error);
+            setError(error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
 
-    // NOT NEEDED
-    // Handle search
-    const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
-
-    /*
-        THIS CODE RETURNS ALL DATA DEPENDING ON SEARCH, NEED TO CHANGE TO BACKEND
-    */
-    // Filter data based on search term
     const filteredWorkouts = workouts.filter(workout =>
-        workout.workoutName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        workout.workoutDescription.toLowerCase().includes(searchTerm.toLowerCase())
+        workout.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        workout.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const filteredExercises = exercises.filter(exercise =>
-        exercise.exerciseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        exercise.exerciseDescription.toLowerCase().includes(searchTerm.toLowerCase())
+        exercise.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        exercise.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Delete handlers
@@ -118,19 +110,6 @@ export default function WorkoutDashboard() {
         setExercises(exercises.filter(exercise => exercise.id !== id));
     };
 
-    const fetchWorkouts = async () => {
-        try {
-            const response = await fetchWithAuth('http://localhost:3000/api/workouts');
-            if (!response.ok) {
-                throw new Error('Failed to fetch workouts');
-            }
-            const data = await response.json();
-            setWorkouts(data);
-        } catch (error) {
-            console.error('Error fetching workouts:', error);
-        }
-    };
-
     return (
         <Container maxWidth="lg">
             <Paper elevation={3} sx={{ p: 4, mt: 4, mb: 4 }}>
@@ -138,7 +117,6 @@ export default function WorkoutDashboard() {
                     <Typography variant="h4" component="h1">
                         Workout Planner Dashboard
                     </Typography>
-
                 </Box>
 
                 <Tabs
@@ -178,7 +156,15 @@ export default function WorkoutDashboard() {
                             </Button>
                         </Box>
 
-                        {filteredWorkouts.length === 0 ? (
+                        {isLoading ? (
+                            <Typography variant="body1" sx={{ textAlign: 'center', my: 4 }}>
+                                Loading workouts...
+                            </Typography>
+                        ) : error ? (
+                            <Typography variant="body1" sx={{ textAlign: 'center', my: 4, color: 'error.main' }}>
+                                Error: {error}
+                            </Typography>
+                        ) : filteredWorkouts.length === 0 ? (
                             <Typography variant="body1" sx={{ textAlign: 'center', my: 4 }}>
                                 No workouts found. Add a new workout to get started!
                             </Typography>
@@ -189,10 +175,10 @@ export default function WorkoutDashboard() {
                                         <Card elevation={2}>
                                             <CardContent>
                                                 <Typography variant="h6" gutterBottom>
-                                                    {workout.workoutName}
+                                                    {workout.name}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                                    {workout.workoutDescription}
+                                                    {workout.description}
                                                 </Typography>
                                                 <Typography variant="body2">
                                                     <strong>Duration:</strong> {workout.duration}
@@ -235,7 +221,15 @@ export default function WorkoutDashboard() {
                             </Button>
                         </Box>
 
-                        {filteredExercises.length === 0 ? (
+                        {isLoading ? (
+                            <Typography variant="body1" sx={{ textAlign: 'center', my: 4 }}>
+                                Loading exercises...
+                            </Typography>
+                        ) : error ? (
+                            <Typography variant="body1" sx={{ textAlign: 'center', my: 4, color: 'error.main' }}>
+                                Error: {error}
+                            </Typography>
+                        ) : filteredExercises.length === 0 ? (
                             <Typography variant="body1" sx={{ textAlign: 'center', my: 4 }}>
                                 No exercises found. Add a new exercise to get started!
                             </Typography>
@@ -246,10 +240,10 @@ export default function WorkoutDashboard() {
                                         <Card elevation={2}>
                                             <CardContent>
                                                 <Typography variant="h6" gutterBottom>
-                                                    {exercise.exerciseName}
+                                                    {exercise.name}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                                    {exercise.exerciseDescription}
+                                                    {exercise.description}
                                                 </Typography>
                                                 <Grid container spacing={1}>
                                                     <Grid item xs={4}>

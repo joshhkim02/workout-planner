@@ -3,13 +3,13 @@ const db = require("../models/exerciseModel");
 const createExerciseController = async (req, res) => {
     try {
         console.log("req.body: ", req.body);
-        const { workout_id, name, description, sets, reps, weight } = req.body;
+        const { user_id, name, description, sets, reps, weight } = req.body;
 
-        if (!workout_id || !name || !description || !sets || !reps || !weight) {
-            return res.status(400).send("Missing required fields: workout_id, name, description, sets, reps, weight");
+        if (!user_id || !name || !description || !sets || !reps || !weight) {
+            return res.status(400).send("Missing required fields: user_id, name, description, sets, reps, weight");
         }
 
-        const result = await db.createExercise(workout_id, name, description, sets, reps, weight);
+        const result = await db.createExercise(user_id, name, description, sets, reps, weight);
         console.log("Exercise created: ", result);
         res.status(201).json({
             message: "Exercise created successfully",
@@ -23,16 +23,16 @@ const createExerciseController = async (req, res) => {
 
 const getExerciseController = async (req, res) => {
     try {
-        console.log("req.body: ", req.body);
-        const { workout_id, exercise_id } = req.body;
+        const { id } = req.params;
+        const { user_id } = req.user_id;
 
-        if (!workout_id || !exercise_id) {
-            return res.status(400).send("Missing required fields: workout_id, exercise_id");
+        if (!user_id || !id) {
+            return res.status(400).send("Missing required fields: user_id, exercise_id");
         }
 
-        const result = await db.getExercise(workout_id, exercise_id);
+        const result = await db.getExercise(user_id, id);
         console.log("Exercise returned: ", result);
-        res.status(201).json({
+        res.status(200).json({
             message: "Exercise returned successfully:",
             result: result
         });
@@ -44,16 +44,16 @@ const getExerciseController = async (req, res) => {
 
 const getAllExercisesController = async (req, res) => {
     try {
-        console.log("req.body: ", req.body);
-        const { workout_id } = req.body;
+        console.log("req.user: ", req.user);
+        const user_id = req.user.id;
 
-        if (!workout_id) {
-            return res.status(400).send("Missing required fields: workout_id");
+        if (!user_id) {
+            return res.status(400).send("Missing required fields: user_id");
         }
 
-        const result = await db.getAllExercises(workout_id);
+        const result = await db.getAllExercises(user_id);
         console.log("All exercises from specified workout retrieved ", result);
-        res.status(201).json({
+        res.status(200).json({
             message: "All exercises from specified user workout successfully",
             result: result
         });
@@ -94,14 +94,13 @@ const updateExerciseController = async (req, res) => {
 
 const deleteExerciseController = async (req, res) => {
     try {
-        console.log("req.body: ", req.body);
-        const { exercise_id } = req.body;
+        const { id } = req.params;
 
-        if (!exercise_id) {
+        if (!id) {
             return res.status(400).send("Missing required field: exercise_id");
         }
 
-        const result = await db.deleteExercise(exercise_id);
+        const result = await db.deleteExercise(id);
         console.log("Exercise deleted: ", result);
         res.status(201).json({
             message: "Exercise deleted successfully",
