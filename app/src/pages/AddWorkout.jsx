@@ -9,22 +9,20 @@ import {
     Snackbar,
     Alert
 } from '@mui/material';
+import { fetchWithAuth } from '../services/authUtils';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddWorkout() {
-    // Form state
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         workoutName: '',
         workoutDescription: '',
         duration: '',
     });
-
-    // Error state
     const [errors, setErrors] = useState({});
-
-    // Submission state
+    const [apiError, setApiError] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    // Handle text input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -46,7 +44,7 @@ export default function AddWorkout() {
         const newErrors = {};
 
         if (!formData.workoutName.trim()) {
-            newErrors.workoutName = 'First name is required';
+            newErrors.workoutName = 'Workout name is required';
         }
 
         if (!formData.workoutDescription.trim()) {
@@ -62,19 +60,51 @@ export default function AddWorkout() {
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setApiError('');
 
         if (validateForm()) {
-            console.log('Form submitted:', formData);
-            setIsSubmitted(true);
+            try {
+                const userData = JSON.parse(localStorage.getItem('user'));
 
-            // Reset form after successful submission (optional)
-            // setFormData({
-            //   workoutName: '',
-            //   workoutDescription: '',
-            //   duration: '',
-            // });
+                if (!userData || !userData.id) {
+                    console.log("User not authenticated. Please log in again.");
+                    return;
+                }
+
+                const workoutData = {
+                    user_id: userData.id,
+                    name: formData.workoutName,
+                    description: formData.workoutDescription,
+                    duration: formData.duration
+                };
+
+                const response = await fetchWithAuth('http://localhost:3000/api/workout', {
+                    method: 'POST',
+                    body: JSON.stringify(workoutData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log("Workout created successfully:", data);
+                    setIsSubmitted(true);
+
+                    setFormData({
+                        workoutName: '',
+                        workoutDescription: '',
+                        duration: '',
+                    });
+                    navigate('/home');
+                } else {
+                    console.log("Error creating workout: ", data);
+                    setApiError(data.message || `Failed to create workout (${response.status}). Please try again.`);
+                }
+            } catch (error) {
+                console.log("Error submitting form: ", error);
+                setApiError(error.message || 'An error occurred. Please try again.');
+            }
         }
     };
 
@@ -83,27 +113,31 @@ export default function AddWorkout() {
         setIsSubmitted(false);
     };
 
+    // Close error notification
+    const handleCloseErrorSnackbar = () => {
+        setApiError('');
+    };
+
     return (
         <Container maxWidth="sm">
             <Paper elevation={3} sx={{ p: 4, mt: 4, mb: 4 }}>
                 <Typography variant="h4" component="h1" align="center" gutterBottom>
-                    Workout Information
+                    Add New Workout
                 </Typography>
 
                 <Box component="form" onSubmit={handleSubmit} noValidate>
-                    <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-                        <TextField
-                            fullWidth
-                            required
-                            id="workoutName"
-                            name="workoutName"
-                            label="Workout Name"
-                            value={formData.workoutName}
-                            onChange={handleChange}
-                            error={!!errors.workoutName}
-                            helperText={errors.workoutName}
-                        />
-                    </Box>
+                    <TextField
+                        fullWidth
+                        required
+                        id="workoutName"
+                        name="workoutName"
+                        label="Workout Name"
+                        value={formData.workoutName}
+                        onChange={handleChange}
+                        error={!!errors.workoutName}
+                        helperText={errors.workoutName}
+                        margin="normal"
+                    />
 
                     <TextField
                         fullWidth
@@ -125,8 +159,8 @@ export default function AddWorkout() {
                         required
                         id="duration"
                         name="duration"
-                        label="Workout duration"
-                        type="duration"
+                        label="Workout Duration (minutes)"
+                        type="number"
                         margin="normal"
                         value={formData.duration}
                         onChange={handleChange}
@@ -142,11 +176,12 @@ export default function AddWorkout() {
                         fullWidth
                         sx={{ mt: 3 }}
                     >
-                        Submit
+                        Create Workout
                     </Button>
                 </Box>
             </Paper>
 
+            {/* Success message */}
             <Snackbar
                 open={isSubmitted}
                 autoHideDuration={6000}
@@ -154,9 +189,21 @@ export default function AddWorkout() {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
                 <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-                    Form submitted successfully!
+                    Workout created successfully!
+                </Alert>
+            </Snackbar>
+
+            {/* Error message */}
+            <Snackbar
+                open={!!apiError}
+                autoHideDuration={6000}
+                onClose={handleCloseErrorSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseErrorSnackbar} severity="error" sx={{ width: '100%' }}>
+                    {apiError}
                 </Alert>
             </Snackbar>
         </Container>
     );
-};
+}

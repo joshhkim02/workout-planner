@@ -171,7 +171,7 @@ export default function Home() {
                         ) : (
                             <Grid container spacing={3}>
                                 {filteredWorkouts.map((workout) => (
-                                    <Grid item xs={12} md={6} lg={4} key={workout.id}>
+                                    <Grid size={{ xs: 12, md: 6, lg: 4 }} key={workout.id}>
                                         <Card elevation={2}>
                                             <CardContent>
                                                 <Typography variant="h6" gutterBottom>
@@ -236,7 +236,7 @@ export default function Home() {
                         ) : (
                             <Grid container spacing={3}>
                                 {filteredExercises.map((exercise) => (
-                                    <Grid item xs={12} md={6} lg={4} key={exercise.id}>
+                                    <Grid size={{ xs: 12, md: 6, lg: 4 }} key={exercise.id}>
                                         <Card elevation={2}>
                                             <CardContent>
                                                 <Typography variant="h6" gutterBottom>
@@ -246,17 +246,17 @@ export default function Home() {
                                                     {exercise.description}
                                                 </Typography>
                                                 <Grid container spacing={1}>
-                                                    <Grid item xs={4}>
+                                                    <Grid size={{ xs: 4 }} >
                                                         <Typography variant="body2">
                                                             <strong>Sets:</strong> {exercise.sets}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={4}>
+                                                    <Grid size={{ xs: 4 }} >
                                                         <Typography variant="body2">
                                                             <strong>Reps:</strong> {exercise.reps}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item xs={4}>
+                                                    <Grid size={{ xs: 4 }} >
                                                         <Typography variant="body2">
                                                             <strong>Weight:</strong> {exercise.weight}
                                                         </Typography>
