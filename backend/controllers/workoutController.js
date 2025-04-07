@@ -1,8 +1,11 @@
 const db = require("../models/workoutModel");
 
+/*
+    Create a workout based on the name, description, and duration of workout.
+    Verify user_id and name are passed, then perform database operation.
+*/
 const createWorkoutController = async (req, res) => {
     try {
-        console.log("req.body: ", req.body);
         const { user_id, name, description, duration } = req.body;
 
         if (!user_id || !name) {
@@ -10,17 +13,20 @@ const createWorkoutController = async (req, res) => {
         }
 
         const result = await db.createWorkout(user_id, name, description || null, duration || null);
-        console.log("Workout created: ", result);
         res.status(201).json({
             message: "Workout created successfully",
             workout: result
         });
-    } catch (err) {
-        console.log("Error creating workout: ", err);
-        res.status(500).send("Error creating workout: " + err.message);
+    } catch (error) {
+        console.error("Error creating workout: ", error);
+        res.status(500).json({ message: 'Server Error' });
     }
 };
 
+/*
+    Get a specific workout from a user.
+    Verify the user_id and workout_id (id from req.params) match up correctly in the database, then perform database operation.
+*/
 const getWorkoutController = async (req, res) => {
     try {
         const { id } = req.params;
@@ -31,20 +37,22 @@ const getWorkoutController = async (req, res) => {
         }
 
         const result = await db.getWorkout(user_id, id);
-        console.log("Specified workout retrieved: ", result);
         res.status(200).json({
             message: "Specified workout returned successfully",
             result: result
         });
-    } catch (err) {
-        console.log("Error returning workout: ", err);
-        res.status(500).send("Error returning workout: " + err.message);
+    } catch (error) {
+        console.error("Error returning workout: ", error);
+        res.status(500).json({ message: 'Server Error' });
     }
 };
 
+/*
+    Get all workouts from a user.
+    Verify the user_id in the database, then perform database operation.
+*/
 const getAllWorkoutsController = async (req, res) => {
     try {
-        console.log("req.body: ", req.body);
         const user_id = req.user.id;
 
         if (!user_id) {
@@ -52,17 +60,21 @@ const getAllWorkoutsController = async (req, res) => {
         }
 
         const result = await db.getAllWorkouts(user_id);
-        console.log("All workouts from specified user retrieved ", result);
         res.status(200).json({
             message: "All workouts from specified user returned successfully",
             result: result
         });
-    } catch (err) {
-        console.log("Error retrieving all workouts: ", err);
-        res.status(500).send("Error returning workouts: " + err.message);
+    } catch (error) {
+        console.error("Error retrieving all workouts: ", error);
+        res.status(500).json({ message: 'Server Error' });
     }
 };
 
+/*
+    Update a specific workout from a user.
+    Verify the workout_id (id from req.params) in the database, then perform database operation.
+    As seen in workoutModel with COALESCE, if only one field is changed, it will keep the previous values of other fields.
+*/
 const updateWorkoutController = async (req, res) => {
     try {
         const { id } = req.params;
@@ -82,16 +94,20 @@ const updateWorkoutController = async (req, res) => {
             });
         }
 
-        res.status(201).json({
+        res.status(200).json({
             message: "Workout updated successfully",
             result: result
         });
-    } catch (err) {
-        console.log("Error updating workout: ", err);
-        res.status(500).send("Error updating workout: " + err.message);
+    } catch (error) {
+        console.error("Error updating workout: ", error);
+        res.status(500).json({ message: 'Server Error' });
     }
 };
 
+/*
+    Delete a specific workout.
+    Verify the workout_id (id from req.params) in the database, then perform database operation.
+*/
 const deleteWorkoutController = async (req, res) => {
     try {
         const { id } = req.params;
@@ -101,15 +117,14 @@ const deleteWorkoutController = async (req, res) => {
         }
 
         const result = await db.deleteWorkout(id);
-        console.log("Workout deleted: ", result);
 
-        res.status(201).json({
+        res.status(200).json({
             message: "Workout deleted successfully",
             result: result
         });
-    } catch (err) {
-        console.log("Error deleting workout: ", err);
-        res.status(500).send("Error deleting workout: " + err.message);
+    } catch (error) {
+        console.error("Error deleting workout: ", error);
+        res.status(500).json({ message: 'Server Error' });
     }
 };
 

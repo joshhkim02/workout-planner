@@ -2,11 +2,11 @@ const pool = require("../database/database");
 
 /*
     This file contains all the queries that will be used in exerciseController
-        - createExercise
-        - getExercise
-        - getAllExercises
-        - updateExercise
-        - deleteExercise
+        - createExercise(user_id, name, description, sets, reps, weight)
+        - getExercise(user_id, exercise_id)
+        - getAllExercises(user_id)
+        - updateExercise(exercise_id, name, description, sets, reps, weight)
+        - deleteExercise(exercise_id)
 */
 
 async function createExercise(user_id, name, description, sets, reps, weight) {

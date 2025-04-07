@@ -10,6 +10,9 @@ const {
     deleteExerciseController,
 } = require('../controllers/exerciseController');
 
+/*
+    All these routes require authentication from the user, as they perform database operations based on the user
+*/
 router.post('/exercise', authenticateToken, createExerciseController);
 router.get('/exercise/:id', authenticateToken, getExerciseController);
 router.get('/exercise', authenticateToken, getAllExercisesController);

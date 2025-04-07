@@ -62,7 +62,7 @@ const registerController = async (req, res) => {
         });
     } catch (error) {
         console.error("Error creating user: ", error);
-        res.status(500).json({ message: "Server Error", error: error.message });
+        res.status(500).json({ message: "Server Error" });
     }
 };
 
@@ -106,7 +106,7 @@ const loginController = async (req, res) => {
         });
     } catch (error) {
         console.error("Login error:", error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 }
 
