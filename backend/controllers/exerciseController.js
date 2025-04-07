@@ -24,7 +24,7 @@ const createExerciseController = async (req, res) => {
 const getExerciseController = async (req, res) => {
     try {
         const { id } = req.params;
-        const { user_id } = req.user_id;
+        const user_id = req.user.id;
 
         if (!user_id || !id) {
             return res.status(400).send("Missing required fields: user_id, exercise_id");
