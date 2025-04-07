@@ -1,6 +1,4 @@
 # Workout Planner
-A full stack PERN web application that allows users to create, edit, and delete workouts and exercises. 
-
 ## Features
 <ul>
   <li>Login and sign-up functionality</li>
