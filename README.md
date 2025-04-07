@@ -2,6 +2,7 @@
 ## Features
 <ul>
   <li>Login and sign-up functionality</li>
+  <li>RESTful API for easy scalability and use</li>
   <li>JWT Authentication and password salting/hashing for security</li>
   <li>Create multiple workouts/exercises with their respective information</li>
   <li>Read all workouts/exercises associated with user in home page</li>
