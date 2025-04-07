@@ -83,14 +83,6 @@ export default function EditWorkout() {
             newErrors.workoutName = 'Workout name is required';
         }
 
-        // if (!formData.workoutDescription.trim()) {
-        //     newErrors.workoutDescription = 'Description is required';
-        // }
-
-        // if (!formData.duration.trim()) {
-        //     newErrors.duration = 'Workout duration is required';
-        // }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -118,7 +110,9 @@ export default function EditWorkout() {
                 }
 
                 setIsSubmitted(true);
-                navigate('/home');
+                setTimeout(() => {
+                    navigate('/home');
+                }, 2000);
             } catch (error) {
                 console.log("Error updating workout: ", error);
                 setApiError(error.message);

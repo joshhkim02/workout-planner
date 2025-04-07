@@ -13,6 +13,8 @@ import {
     Tab,
     Divider,
     IconButton,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -29,6 +31,8 @@ export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState(null);
+    const [isDeleted, setIsDeleted] = useState(false);
+    const [alertSeverity, setAlertSeverity] = useState("success");
 
     useEffect(() => {
         if (tabValue === 0) {
@@ -112,6 +116,8 @@ export default function Home() {
             }
 
             setWorkouts(workouts.filter(workout => workout.id !== id));
+            setIsDeleted(true);
+            setAlertSeverity("success");
         } catch (error) {
             console.error("Error deleting workout:", error);
         }
@@ -128,10 +134,16 @@ export default function Home() {
             }
 
             setExercises(exercises.filter(exercise => exercise.id !== id));
+            setIsDeleted(true);
+            setAlertSeverity("success");
         } catch (error) {
             console.log("Error deleting exercise:", error);
         }
     };
+
+    const handleCloseSnackbar = () => {
+        setIsDeleted(false);
+    }
 
     return (
         <Container maxWidth="lg">
@@ -306,6 +318,20 @@ export default function Home() {
                     </>
                 )}
             </Paper>
+            <Snackbar
+                open={isDeleted}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={alertSeverity}
+                    sx={{ width: '100%' }}
+                >
+                    Item deleted successfully!
+                </Alert>
+            </Snackbar>
         </Container >
     );
 }

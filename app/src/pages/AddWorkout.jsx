@@ -96,7 +96,9 @@ export default function AddWorkout() {
                         workoutDescription: '',
                         duration: '',
                     });
-                    navigate('/home');
+                    setTimeout(() => {
+                        navigate('/home');
+                    }, 2000);
                 } else {
                     console.log("Error creating workout: ", data);
                     setApiError(data.message || `Failed to create workout (${response.status}). Please try again.`);

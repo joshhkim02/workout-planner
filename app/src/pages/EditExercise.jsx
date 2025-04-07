@@ -88,22 +88,6 @@ export default function EditExercise() {
             newErrors.exerciseName = 'Exercise name is required';
         }
 
-        // if (!formData.exerciseDescription.trim()) {
-        //     newErrors.exerciseDescription = 'Description is required';
-        // }
-
-        // if (!formData.sets.trim()) {
-        //     newErrors.sets = 'Number of sets is required';
-        // }
-
-        // if (!formData.reps.trim()) {
-        //     newErrors.reps = 'Number of reps is required';
-        // }
-
-        // if (!formData.weight.trim()) {
-        //     newErrors.weight = 'Weight is required';
-        // }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -131,7 +115,9 @@ export default function EditExercise() {
                     console.log("Failed to update exercise");
                 }
                 setIsSubmitted(true);
-                navigate('/home');
+                setTimeout(() => {
+                    navigate('/home');
+                }, 2000);
             } catch (error) {
                 console.log("Error updating exercise: ", error);
                 setApiError(error.message);

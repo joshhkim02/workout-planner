@@ -111,7 +111,9 @@ export default function AddExercise() {
                         reps: '',
                         weight: '',
                     });
-                    navigate('/home');
+                    setTimeout(() => {
+                        navigate('/home');
+                    }, 2000);
                 } else {
                     console.log("Error creating exercise: ", data);
                     setApiError(data.message || `Failed to create exercise (${response.status}). Please try again.`);
