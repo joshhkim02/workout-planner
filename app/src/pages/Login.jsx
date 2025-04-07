@@ -91,6 +91,7 @@ export default function Login() {
                 localStorage.setItem('user', JSON.stringify(data.user));
 
                 navigate('/home');
+                window.location.reload();
             } catch (error) {
                 console.log('Login error:', error);
                 alert(`Login failed: ${error.message}`);

@@ -21,7 +21,6 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import { fetchWithAuth } from '../services/authUtils';
 
-
 export default function Home() {
     // Tab state
     const [tabValue, setTabValue] = useState(0);
@@ -185,7 +184,7 @@ export default function Home() {
                                                 </Typography>
                                             </CardContent>
                                             <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                                <IconButton size="small" color="primary">
+                                                <IconButton size="small" color="primary" href={`/editworkout/${workout.id}`}>
                                                     <EditIcon />
                                                 </IconButton>
                                                 <IconButton
@@ -264,7 +263,7 @@ export default function Home() {
                                                 </Grid>
                                             </CardContent>
                                             <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                                <IconButton size="small" color="primary">
+                                                <IconButton size="small" color="primary" href={`/editexercise/${exercise.id}`}>
                                                     <EditIcon />
                                                 </IconButton>
                                                 <IconButton
@@ -283,6 +282,6 @@ export default function Home() {
                     </>
                 )}
             </Paper>
-        </Container>
+        </Container >
     );
 }

@@ -77,8 +77,7 @@ export default function Navbar() {
 
     // Action items
     const actionItems = isLoggedIn
-        ? [
-        ]
+        ? [{ text: 'Switch Accounts', icon: <AddIcon />, path: '/' },]
         : [
             { text: 'Login', icon: <AccountCircleIcon />, path: '/' },
             { text: 'Sign Up', icon: <AddIcon />, path: '/signup' },
@@ -181,6 +180,7 @@ export default function Navbar() {
                                         <Avatar
                                             sx={{ ml: 1, cursor: 'pointer' }}
                                             src={user.avatar}
+                                            onClick={toggleDrawer(true)}
                                         >
                                             {user.name.charAt(0)}
                                         </Avatar>

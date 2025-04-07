@@ -19,8 +19,8 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/workout" element={<AddWorkout />} />
                 <Route path="/exercise" element={<AddExercise />} />
-                <Route path="/editworkout" element={<EditWorkout />} />
-                <Route path="/editexercise" element={<EditExercise />} />
+                <Route path="/editworkout/:id" element={<EditWorkout />} />
+                <Route path="/editexercise/:id" element={<EditExercise />} />
             </Routes>
         </BrowserRouter>
     )
