@@ -101,12 +101,36 @@ export default function Home() {
     );
 
     // Delete handlers
-    const handleDeleteWorkout = (id) => {
-        setWorkouts(workouts.filter(workout => workout.id !== id));
+    const handleDeleteWorkout = async (id) => {
+        try {
+            const response = await fetchWithAuth(`http://localhost:3000/api/workout/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                console.log("Failed to delete workout");
+            }
+
+            setWorkouts(workouts.filter(workout => workout.id !== id));
+        } catch (error) {
+            console.error("Error deleting workout:", error);
+        }
     };
 
-    const handleDeleteExercise = (id) => {
-        setExercises(exercises.filter(exercise => exercise.id !== id));
+    const handleDeleteExercise = async (id) => {
+        try {
+            const response = await fetchWithAuth(`http://localhost:3000/api/exercise/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                console.log("Failed to delete exercise");
+            }
+
+            setExercises(exercises.filter(exercise => exercise.id !== id));
+        } catch (error) {
+            console.log("Error deleting exercise:", error);
+        }
     };
 
     return (
