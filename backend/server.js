@@ -14,7 +14,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', userRoutes);
 app.use('/api', workoutRoutes);
 app.use('/api', exerciseRoutes);
-app.get('/', (req, res) => res.send('Hello, world!'));
 
 app.listen(port, () => {
   console.log(`Backend listening on port ${port}`);

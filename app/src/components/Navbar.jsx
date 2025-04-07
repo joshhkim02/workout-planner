@@ -23,10 +23,8 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddIcon from '@mui/icons-material/Add';
-import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
-    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -129,7 +127,7 @@ export default function Navbar() {
     return (
         <>
             <AppBar position="static" elevation={2}>
-                <Container maxWidth="lg">
+                <Container maxWidth="xl">
                     <Toolbar disableGutters>
                         {isMobile && (
                             <IconButton
