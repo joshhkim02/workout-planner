@@ -28,14 +28,12 @@ export default function Navbar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [drawerOpen, setDrawerOpen] = useState(false);
-
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState({
         name: '',
-        email: '',
-        id: null
     });
 
+    // Get JWT token and user information
     useEffect(() => {
         const token = localStorage.getItem('token');
         const userData = localStorage.getItem('user');
@@ -46,8 +44,6 @@ export default function Navbar() {
                 const parsedUser = JSON.parse(userData);
                 setUser({
                     name: parsedUser.name || 'User',
-                    email: parsedUser.email || '',
-                    id: parsedUser.id || null
                 });
             } catch (error) {
                 console.log("Error parsing user data:", error);
@@ -65,7 +61,7 @@ export default function Navbar() {
         setDrawerOpen(open);
     };
 
-    // Navigation items
+    // Navigation buttons based on login status
     const navItems = isLoggedIn
         ? [
             { text: 'Home', icon: <HomeIcon />, path: '/home' },
@@ -73,7 +69,7 @@ export default function Navbar() {
             { text: 'Add Exercise', icon: <FitnessCenterIcon />, path: '/exercise' },]
         : [];
 
-    // Action items
+    // Action bar buttons based on login status
     const actionItems = isLoggedIn
         ? [{ text: 'Switch Accounts', icon: <AddIcon />, path: '/' },]
         : [
@@ -91,7 +87,6 @@ export default function Navbar() {
             <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                 <Avatar
                     sx={{ width: 64, height: 64, mb: 1, bgcolor: theme.palette.primary.main }}
-                    src={user.avatar}
                 >
                     {user.name.charAt(0)}
                 </Avatar>
@@ -177,7 +172,6 @@ export default function Navbar() {
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Avatar
                                             sx={{ ml: 1, cursor: 'pointer' }}
-                                            src={user.avatar}
                                             onClick={toggleDrawer(true)}
                                         >
                                             {user.name.charAt(0)}

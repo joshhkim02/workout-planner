@@ -13,14 +13,15 @@ function App() {
         <BrowserRouter>
             <Navbar />
             <Routes>
+                {/* Non-Protected Routes */}
                 <Route path="/" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
-
+                {/* Protected routes */}
                 <Route path="/home" element={<Home />} />
                 <Route path="/workout" element={<AddWorkout />} />
                 <Route path="/exercise" element={<AddExercise />} />
-                <Route path="/editworkout/:id" element={<EditWorkout />} />
-                <Route path="/editexercise/:id" element={<EditExercise />} />
+                <Route path="/workout/:id" element={<EditWorkout />} />
+                <Route path="/exercise/:id" element={<EditExercise />} />
             </Routes>
         </BrowserRouter>
     )

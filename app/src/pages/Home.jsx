@@ -220,7 +220,7 @@ export default function Home() {
                                                 </Typography>
                                             </CardContent>
                                             <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                                <IconButton size="small" color="primary" href={`/editworkout/${workout.id}`}>
+                                                <IconButton size="small" color="primary" href={`/workout/${workout.id}`}>
                                                     <EditIcon />
                                                 </IconButton>
                                                 <IconButton
@@ -299,7 +299,7 @@ export default function Home() {
                                                 </Grid>
                                             </CardContent>
                                             <CardActions sx={{ justifyContent: 'flex-end' }}>
-                                                <IconButton size="small" color="primary" href={`/editexercise/${exercise.id}`}>
+                                                <IconButton size="small" color="primary" href={`/exercise/${exercise.id}`}>
                                                     <EditIcon />
                                                 </IconButton>
                                                 <IconButton
