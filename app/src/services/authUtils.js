@@ -1,3 +1,8 @@
+/*
+    Get JWT token from localStorage and add it to the request headers for authentication purposes
+    If unauthorized or forbidden, return user to login page
+    Return fetch request so functions that require authentication can handle the rest
+*/
 export const fetchWithAuth = async (URL, options = {}) => {
     const token = localStorage.getItem('token');
 

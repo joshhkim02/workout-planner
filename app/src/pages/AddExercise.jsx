@@ -12,7 +12,6 @@ import {
 import { fetchWithAuth } from '../services/authUtils';
 import { useNavigate } from 'react-router-dom';
 
-
 export default function AddExercise() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -26,6 +25,7 @@ export default function AddExercise() {
     const [apiError, setApiError] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    // Allow user to type in fields and remove errors when typing
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -33,7 +33,6 @@ export default function AddExercise() {
             [name]: value
         });
 
-        // Clear error when typing
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -70,7 +69,10 @@ export default function AddExercise() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Handle form submission
+    /*
+        Make sure user is authenticated, then await POST request with data from form.
+        If response is good, reset the form to blank state and navigate to home after 2 seconds to allow UI to show success snackbar
+    */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setApiError('');
@@ -101,7 +103,6 @@ export default function AddExercise() {
                 const data = await response.json();
 
                 if (response.ok) {
-                    console.log("Exercise created successfully:", data);
                     setIsSubmitted(true);
 
                     setFormData({
@@ -115,11 +116,9 @@ export default function AddExercise() {
                         navigate('/home');
                     }, 2000);
                 } else {
-                    console.log("Error creating exercise: ", data);
                     setApiError(data.message || `Failed to create exercise (${response.status}). Please try again.`);
                 }
             } catch (error) {
-                console.log("Error submitting form: ", error);
                 setApiError(error.message || 'An error occurred. Please try again.');
             }
         }
@@ -130,6 +129,7 @@ export default function AddExercise() {
         setIsSubmitted(false);
     };
 
+    // Close error notification
     const handleCloseErrorSnackbar = () => {
         setApiError('');
     };
@@ -235,7 +235,6 @@ export default function AddExercise() {
                 </Alert>
             </Snackbar>
 
-            {/* Error message */}
             <Snackbar
                 open={!!apiError}
                 autoHideDuration={6000}

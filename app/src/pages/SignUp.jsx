@@ -27,7 +27,7 @@ export default function SignUp() {
         confirmPassword: '',
     });
 
-    // Allow user to type in textfields
+    // Allow user to type in fields and remove errors when typing
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -35,7 +35,6 @@ export default function SignUp() {
             [name]: value
         });
 
-        // Clear error when user types
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -44,6 +43,7 @@ export default function SignUp() {
         }
     };
 
+    // Handle signup validation
     const validateForm = () => {
         let isValid = true;
         const newErrors = {
@@ -72,8 +72,8 @@ export default function SignUp() {
         if (!formData.password) {
             newErrors.password = 'Password is required';
             isValid = false;
-        } else if (formData.password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters';
+        } else if (formData.password.length < 6) {
+            newErrors.password = 'Password must be at least 6 characters';
             isValid = false;
         }
 
@@ -90,7 +90,11 @@ export default function SignUp() {
         return isValid;
     };
 
-
+    /*
+        If form is valid, send POST createUser request to API.
+        If response is good, store JWT token and user into localStorage
+        Navigate to login page for newly created user
+    */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -118,8 +122,8 @@ export default function SignUp() {
 
                 navigate('/');
             } catch (error) {
-                console.log('Registration error:', error);
-                alert(`Login failed: ${error.message}`);
+                console.error('Registration error:', error);
+                alert(`Registration failed: ${error.message}`);
             }
         }
     };

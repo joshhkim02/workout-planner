@@ -23,6 +23,7 @@ export default function AddWorkout() {
     const [apiError, setApiError] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    // Allow user to type in fields and remove errors when typing
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -30,7 +31,6 @@ export default function AddWorkout() {
             [name]: value
         });
 
-        // Clear error when typing
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -59,7 +59,10 @@ export default function AddWorkout() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Handle form submission
+    /*
+        Make sure user is authenticated, then await POST request with data from form.
+        If response is good, reset the form to blank state and navigate to home after 2 seconds to allow UI to show success snackbar
+    */
     const handleSubmit = async (e) => {
         e.preventDefault();
         setApiError('');
@@ -88,7 +91,6 @@ export default function AddWorkout() {
                 const data = await response.json();
 
                 if (response.ok) {
-                    console.log("Workout created successfully:", data);
                     setIsSubmitted(true);
 
                     setFormData({
@@ -100,11 +102,9 @@ export default function AddWorkout() {
                         navigate('/home');
                     }, 2000);
                 } else {
-                    console.log("Error creating workout: ", data);
                     setApiError(data.message || `Failed to create workout (${response.status}). Please try again.`);
                 }
             } catch (error) {
-                console.log("Error submitting form: ", error);
                 setApiError(error.message || 'An error occurred. Please try again.');
             }
         }
@@ -183,7 +183,6 @@ export default function AddWorkout() {
                 </Box>
             </Paper>
 
-            {/* Success message */}
             <Snackbar
                 open={isSubmitted}
                 autoHideDuration={6000}
@@ -195,7 +194,6 @@ export default function AddWorkout() {
                 </Alert>
             </Snackbar>
 
-            {/* Error message */}
             <Snackbar
                 open={!!apiError}
                 autoHideDuration={6000}

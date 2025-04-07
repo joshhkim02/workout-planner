@@ -17,7 +17,6 @@ import { fetchWithAuth } from '../services/authUtils';
 export default function EditExercise() {
     const { id } = useParams();
     const navigate = useNavigate();
-    // Form state
     const [formData, setFormData] = useState({
         exerciseName: '',
         exerciseDescription: '',
@@ -25,13 +24,12 @@ export default function EditExercise() {
         reps: '',
         weight: '',
     });
-
-    // Error state
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [apiError, setApiError] = useState(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    // Grab exercise data with specific ID from home page so form is prefilled
     useEffect(() => {
         const fetchExerciseData = async () => {
             try {
@@ -51,7 +49,6 @@ export default function EditExercise() {
                     weight: data.result.weight || '',
                 });
             } catch (error) {
-                console.log("Error fetching exercise: ", error);
                 setApiError(error.message);
             } finally {
                 setIsLoading(false);
@@ -63,7 +60,7 @@ export default function EditExercise() {
         }
     }, [id]);
 
-    // Handle text input changes
+    // Allow user to type in fields and remove errors when typing
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -71,7 +68,6 @@ export default function EditExercise() {
             [name]: value
         });
 
-        // Clear error when typing
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -92,7 +88,10 @@ export default function EditExercise() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Handle form submission
+    /*
+        If form is valid, send PATCH request with updated fields to API.
+        If response is good, navigate to home after 2 seconds to allow UI to show success snackbar
+    */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -119,7 +118,6 @@ export default function EditExercise() {
                     navigate('/home');
                 }, 2000);
             } catch (error) {
-                console.log("Error updating exercise: ", error);
                 setApiError(error.message);
             } finally {
                 setIsLoading(false);

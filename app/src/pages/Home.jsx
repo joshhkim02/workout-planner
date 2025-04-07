@@ -24,7 +24,6 @@ import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import { fetchWithAuth } from '../services/authUtils';
 
 export default function Home() {
-    // Tab state
     const [tabValue, setTabValue] = useState(0);
     const [workouts, setWorkouts] = useState([]);
     const [exercises, setExercises] = useState([]);
@@ -34,6 +33,7 @@ export default function Home() {
     const [isDeleted, setIsDeleted] = useState(false);
     const [alertSeverity, setAlertSeverity] = useState("success");
 
+    // Depending on which tab user is on, get workouts or exercises affiliated with user
     useEffect(() => {
         if (tabValue === 0) {
             fetchWorkouts();
@@ -42,6 +42,7 @@ export default function Home() {
         }
     }, [tabValue]);
 
+    // Grab workouts associated with user using authentication
     const fetchWorkouts = async () => {
         try {
             setIsLoading(true);
@@ -58,13 +59,17 @@ export default function Home() {
             }));
             setWorkouts(formattedWorkouts);
         } catch (error) {
-            console.log('Error fetching workouts:', error);
+            console.error('Error fetching workouts:', error);
             setError(error.message);
         } finally {
             setIsLoading(false);
         }
     };
 
+    /*
+        Grab exercises associated with user using authentication
+        If data is received, format the data and set it with the corresponding useState so it can be modified later
+    */
     const fetchExercises = async () => {
         try {
             setIsLoading(true);
@@ -83,7 +88,7 @@ export default function Home() {
             }));
             setExercises(formattedExercises);
         } catch (error) {
-            console.log('Error fetching exercises:', error);
+            console.error('Error fetching exercises:', error);
             setError(error.message);
         } finally {
             setIsLoading(false);
@@ -94,6 +99,9 @@ export default function Home() {
         setTabValue(newValue);
     };
 
+    /*
+        Show workouts and exercises 
+    */
     const filteredWorkouts = workouts.filter(workout =>
         workout.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         workout.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -104,7 +112,7 @@ export default function Home() {
         exercise.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Delete handlers
+    // Delete handlers with authentication
     const handleDeleteWorkout = async (id) => {
         try {
             const response = await fetchWithAuth(`http://localhost:3000/api/workout/${id}`, {
@@ -137,10 +145,11 @@ export default function Home() {
             setIsDeleted(true);
             setAlertSeverity("success");
         } catch (error) {
-            console.log("Error deleting exercise:", error);
+            console.error("Error deleting exercise:", error);
         }
     };
 
+    // Reset deleted state after snackbar is closed
     const handleCloseSnackbar = () => {
         setIsDeleted(false);
     }
@@ -174,7 +183,7 @@ export default function Home() {
 
                 <Divider sx={{ mb: 3 }} />
 
-                {/* Workouts Tab Panel */}
+                {/* Workouts Tab*/}
                 {tabValue === 0 && (
                     <>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
@@ -239,7 +248,7 @@ export default function Home() {
                     </>
                 )}
 
-                {/* Exercises Tab Panel */}
+                {/* Exercises Tab*/}
                 {tabValue === 1 && (
                     <>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>

@@ -23,15 +23,14 @@ export default function Login() {
         password: ''
     });
 
+    // Allow user to type in fields and remove errors when typing
     const handleChange = (e) => {
-        // Allow user to type in textfields
         const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value
         });
 
-        // Clear error when user types
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -40,6 +39,7 @@ export default function Login() {
         }
     };
 
+    // Handle Email and Password validation
     const validateForm = () => {
         let isValid = true;
         const newErrors = { email: '', password: '' };
@@ -66,6 +66,11 @@ export default function Login() {
         return isValid;
     };
 
+    /*
+        If form is valid, send POST login request to API.
+        If response is good, store the JWT token and user into localStorage
+        Navigate to the home page and force reload to show logged-in state
+    */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -93,7 +98,7 @@ export default function Login() {
                 navigate('/home');
                 window.location.reload();
             } catch (error) {
-                console.log('Login error:', error);
+                console.error('Login error:', error);
                 alert(`Login failed: ${error.message}`);
             }
         }

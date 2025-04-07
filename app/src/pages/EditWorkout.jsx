@@ -16,19 +16,17 @@ import { fetchWithAuth } from '../services/authUtils';
 export default function EditWorkout() {
     const { id } = useParams();
     const navigate = useNavigate();
-    // Form state
     const [formData, setFormData] = useState({
         workoutName: '',
         workoutDescription: '',
         duration: '',
     });
-
-    // Error state
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [apiError, setApiError] = useState(null);
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    // Grab workout data with specific ID from home page so form is prefilled
     useEffect(() => {
         const fetchWorkoutData = async () => {
             try {
@@ -46,7 +44,6 @@ export default function EditWorkout() {
                     duration: data.result.duration || '',
                 });
             } catch (error) {
-                console.log("Error fetching workout: ", error);
                 setApiError(error.message);
             } finally {
                 setIsLoading(false);
@@ -58,7 +55,7 @@ export default function EditWorkout() {
         }
     }, [id]);
 
-    // Handle text input changes
+    // Allow user to type in fields and remove errors when typing
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -66,7 +63,6 @@ export default function EditWorkout() {
             [name]: value
         });
 
-        // Clear error when typing
         if (errors[name]) {
             setErrors({
                 ...errors,
@@ -87,7 +83,10 @@ export default function EditWorkout() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Handle form submission
+    /*
+        If form is valid, send PATCH request with updated fields to API.
+        If response is good, navigate to home after 2 seconds to allow UI to show success snackbar
+    */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -114,7 +113,6 @@ export default function EditWorkout() {
                     navigate('/home');
                 }, 2000);
             } catch (error) {
-                console.log("Error updating workout: ", error);
                 setApiError(error.message);
             } finally {
                 setIsLoading(false);
